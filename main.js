@@ -28,7 +28,7 @@ function startTimer() {
 // set up canvas
 const para = document.querySelector('p');
 const hitpointValue = document.querySelector('.hpvalue');
-const hpMAX = 1000;
+const hpMAX = 100;
 let hitpoint = hpMAX;
 let count = 0;
 
@@ -141,10 +141,10 @@ class Ball extends Shape {
             if (distance < this.size + ball.size) {
                // this.color = randomRGB();
 
-               // this.velX = - this.velX;
-               // this.velY = - this.velY;
-               // ball.velX = - ball.velX;
-               // ball.velY = - ball.velY;
+               this.velX = - this.velX;
+               this.velY = - this.velY;
+               ball.velX = - ball.velX;
+               ball.velY = - ball.velY;
 
             }
          }
@@ -163,7 +163,7 @@ class EvilCircle extends Shape {
          this.x = e.offsetX;
          this.y = e.offsetY;
       });
-      window.addEventListener('touchmove', e => {
+      window.addEventListener('touchstart', e => {
          this.x = e.offsetX;
          this.y = e.offsetY;
       });
@@ -213,7 +213,7 @@ class EvilCircle extends Shape {
                para.textContent = `Asteroids: ${count}`;
                
                hitpoint--;
-               hitpointValue.textContent = `HP: ${(hitpoint/hpMAX*100).toFixed(0)}%`;
+               hitpointValue.textContent = `HP: ${(hitpoint/hpMAX*100).toFixed(0)}`;
                document.getElementById('hp').value=hitpoint/hpMAX*100;
                
             }
@@ -227,7 +227,7 @@ const balls = [];
 let ballNumber = window.prompt('How many asteroids? (max: 999)', 50);
 while (balls.length < ballNumber) {
    //asteroid size
-   const size = random(10, 20);
+   const size = random(5, 12);
    const ball = new Ball(
       // ball position always drawn at least one ball width
       // away from the edge of the canvas, to avoid drawing errors
