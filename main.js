@@ -42,7 +42,7 @@ const width = canvas.width = container.clientWidth;
 const height = canvas.height = container.clientHeight;
 
 
-let speed = 2;
+let speed = 3;
 function increaseValue() {
    var value = parseInt(document.getElementById('number').value, 10);
    value = isNaN(value) ? 0 : value;

@@ -220,11 +220,14 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @media only  screen and (max-width: 560px){
+  
   .container {
-    margin: 0 1rem;
+    /* margin: 0 1rem; */
     width: 100%;
     height: 90%;
-    top: 3vh;
+    margin: 0 0.5rem;
+    top: 4vh;
+    
   }
 
   .start
@@ -239,11 +242,12 @@ input[type=number]::-webkit-outer-spin-button {
   }
   p{
     font-size: 0.8rem;
-    top: 1.8rem;
+    top: 2.2rem;
   }
   .reset{
     font-size: 1rem;
     padding: 0.2rem 0.5rem;
+    left: 2vw;
   }
   .hitpoint{
     font-size: 0.8rem;
@@ -252,7 +256,7 @@ input[type=number]::-webkit-outer-spin-button {
   }
   .timer
   {
-    left: 30%;
+    left: 35%;
   }
   .timer img
   {
