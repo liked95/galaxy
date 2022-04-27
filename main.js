@@ -23,6 +23,10 @@ function randomRGB() {
    return `rgb(${random(0, 255)},${random(0, 255)},${random(0, 255)})`;
 }
 
+function randomRGBEvilCircle() {
+   return `rgb(${random(170, 255)},${random(170, 255)},${random(170, 255)})`;
+}
+
 class Shape {
    constructor(x, y, velX, velY) {
       this.x = x;
@@ -49,22 +53,12 @@ class Ball extends Shape {
    }
 
    update() {
-      if ((this.x + this.size) >= width) {
+      if (this.x + this.size >= width || this.x - this.size <= 0) {
          this.velX = -(this.velX);
          this.color = randomRGB();
       }
 
-      if ((this.x - this.size) <= 0) {
-         this.velX = -(this.velX);
-         this.color = randomRGB();
-      }
-
-      if ((this.y + this.size) >= height) {
-         this.velY = -(this.velY);
-         this.color = randomRGB();
-      }
-
-      if ((this.y - this.size) <= 0) {
+      if (this.y + this.size >= height || this.y - this.size <= 0) {
          this.velY = -(this.velY);
          this.color = randomRGB();
       }
@@ -109,9 +103,11 @@ class EvilCircle extends Shape {
    draw() {
       ctx.beginPath();
       ctx.strokeStyle = this.color;
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 3;
       ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
       ctx.stroke();
+      ctx.fillStyle = 'rgba(25, 25, 25, 0.8)';
+      ctx.fill();
    }
 
    checkBounds() {
@@ -142,9 +138,10 @@ class EvilCircle extends Shape {
             if (distance < this.size + ball.size) {
                ball.exists = false;
                this.size += 0.8;
+               this.color = randomRGBEvilCircle();
                count--;
                // 50;
-               para.textContent = `Ball count: ${count}`
+               para.textContent = `Asteroid count: ${count}`
             }
          }
       }
@@ -153,7 +150,7 @@ class EvilCircle extends Shape {
 
 }
 const balls = [];
-let ballNumber = window.prompt('How many asteroids? (max: 500)', 50);
+let ballNumber = window.prompt('How many asteroids? (max: 999)', 50);
 while (balls.length < ballNumber) {
    const size = random(10, 20);
    const ball = new Ball(
@@ -161,15 +158,15 @@ while (balls.length < ballNumber) {
       // away from the edge of the canvas, to avoid drawing errors
       random(0 + size, width - size),
       random(0 + size, height - size),
-      random(-7, 1) || random(1,7),
-      random(-7, 1) || random(1,7),
+      random(-5, 1) || random(1, 5),
+      random(-5, 1) || random(1, 5),
       randomRGB(),
       size
    );
 
    balls.push(ball);
    count++;
-   para.textContent = `Ball count: ${count}`
+   para.textContent = `Asteroid count: ${count}`
 }
 
 const evil = new EvilCircle(
@@ -197,19 +194,20 @@ function loop() {
 
 
 // loop();
-
+const reset = document.querySelector('.reset');
 const startGame = document.querySelector('.start');
 startGame.addEventListener('click', (e) => {
-   if (startGame.textContent === 'Start') {
+
       e.preventDefault();
       container.classList.add('active');
+      startGame.classList.add('hidden');
+      reset.classList.add('show');
       loop();
-      startGame.textContent = 'Reset';
-   } else {
-      window.location.reload();
+});
 
-   }
+
+reset.addEventListener('click', () => {
+   window.location.reload();
 })
-
 
 
