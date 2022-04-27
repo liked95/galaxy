@@ -109,7 +109,7 @@ class EvilCircle extends Shape {
    draw() {
       ctx.beginPath();
       ctx.strokeStyle = this.color;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 5;
       ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
       ctx.stroke();
    }
@@ -143,7 +143,7 @@ class EvilCircle extends Shape {
                ball.exists = false;
                this.size += 0.8;
                count--;
-               this.color = randomRGB();
+               // 50;
                para.textContent = `Ball count: ${count}`
             }
          }
@@ -153,7 +153,7 @@ class EvilCircle extends Shape {
 
 }
 const balls = [];
-let ballNumber = window.prompt('How many asteroids?');
+let ballNumber = window.prompt('How many asteroids? (max: 500)', 50);
 while (balls.length < ballNumber) {
    const size = random(10, 20);
    const ball = new Ball(
@@ -161,8 +161,8 @@ while (balls.length < ballNumber) {
       // away from the edge of the canvas, to avoid drawing errors
       random(0 + size, width - size),
       random(0 + size, height - size),
-      random(-7, 7),
-      random(-7, 7),
+      random(-7, 1) || random(1,7),
+      random(-7, 1) || random(1,7),
       randomRGB(),
       size
    );
@@ -200,11 +200,11 @@ function loop() {
 
 const startGame = document.querySelector('.start');
 startGame.addEventListener('click', (e) => {
-   if (startGame.textContent === 'Start game') {
+   if (startGame.textContent === 'Start') {
       e.preventDefault();
       container.classList.add('active');
       loop();
-      startGame.textContent = 'Stop game';
+      startGame.textContent = 'Reset';
    } else {
       window.location.reload();
 
@@ -213,8 +213,3 @@ startGame.addEventListener('click', (e) => {
 
 
 
-
-// const changeNumber = document.querySelector('.change-number');
-// changeNumber.addEventListener('click', () => {
-//    ballNumber = window.prompt('How many asteroids do you want?');
-// });
