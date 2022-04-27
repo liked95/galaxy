@@ -99,7 +99,7 @@ class EvilCircle extends Shape {
          this.x = e.offsetX;
          this.y = e.offsetY;
       });
-      window.addEventListener('touchstart', e => {
+      window.addEventListener('touchmove', e => {
          this.x = e.offsetX;
          this.y = e.offsetY;
       });
@@ -153,7 +153,7 @@ class EvilCircle extends Shape {
 
 }
 const balls = [];
-let ballNumber = 100;
+let ballNumber = window.prompt('How many asteroids?');
 while (balls.length < ballNumber) {
    const size = random(10, 20);
    const ball = new Ball(
@@ -170,7 +170,6 @@ while (balls.length < ballNumber) {
    balls.push(ball);
    count++;
    para.textContent = `Ball count: ${count}`
-
 }
 
 const evil = new EvilCircle(
@@ -201,27 +200,21 @@ function loop() {
 
 const startGame = document.querySelector('.start');
 startGame.addEventListener('click', (e) => {
-   e.preventDefault();
-   container.classList.add('active');
-   loop();
-   startGame.textContent = 'Increase speed';
-})
-
-const stopGame = document.querySelector('.stop');
-stopGame.addEventListener('click', () => {
-   cancelAnimationFrame(loop);
-})
-
-
-
-function updateNumber() {
-   const changeNumber = document.querySelector('.change-number');
-   changeNumber.addEventListener('click', () => {
-      ballNumber = window.prompt('How many asteroids do you want?', '100');
+   if (startGame.textContent === 'Start game') {
+      e.preventDefault();
+      container.classList.add('active');
       loop();
-   });
-}
+      startGame.textContent = 'Stop game';
+   } else {
+      window.location.reload();
 
-updateNumber();
+   }
+})
 
 
+
+
+// const changeNumber = document.querySelector('.change-number');
+// changeNumber.addEventListener('click', () => {
+//    ballNumber = window.prompt('How many asteroids do you want?');
+// });
