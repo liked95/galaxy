@@ -78,20 +78,36 @@ canvas{
   color: white;
 }
 .reset{
-  background-color: green;
-  font-size: 1.3rem;
-  padding: 0.5rem 1rem;
-  position: absolute; 
+  background-color: #c2fbd7;
+  border-radius: 100px;
+  box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;
+  color: green;
+  cursor: pointer;
+  display: inline-block;
+  font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
+  padding: 7px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 250ms;
+  border: 0;
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;  position: absolute; 
   left: 7.5vw; 
   top: 1vh; 
   width: auto;
   z-index: 1;
   border: 2px white solid;
   border-radius: 10px;
-  color: white;
   visibility: hidden;
 }
 
+.reset {
+  box-shadow: rgba(44,187,99,.35) 0 -25px 18px -14px inset,rgba(44,187,99,.25) 0 1px 2px,rgba(44,187,99,.25) 0 2px 4px,rgba(44,187,99,.25) 0 4px 8px,rgba(44,187,99,.25) 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
+  transform: scale(1.05) rotate(-1deg);
+
+}
 
 button :hover
 {
@@ -107,6 +123,101 @@ button :hover
   visibility: visible;
 }
 
+.speed {
+  position: absolute;
+  top: 0.7vh;
+  left: 63%;
+  z-index: 1;
+  display: inline-flex;
+}
+form {
+  width: auto;
+  margin: auto;
+  margin-left: 1rem;
+  text-align: center;
+  
+}
+
+
+.value-button {
+  display: inline-block;
+  border: 1px solid #ddd;
+  margin: 0px;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 11px 0;
+  background: #eee;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.value-button:hover {
+  cursor: pointer;
+}
+
+form #decrease {
+  margin-right: -5px;
+  border-radius: 8px 0 0 8px;
+  background-color: rgb(243, 24, 24);
+}
+
+form #increase {
+  margin-left: -5px;
+  border-radius: 0 8px 8px 0;
+  background-color: rgb(28, 207, 28);
+}
+
+form #input-wrap {
+  margin: 0px;
+  padding: 0px;
+}
+
+input#number {
+  text-align: center;
+  border: none;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin: 0px;
+  width: 40px;
+  height: 40px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.hitpoint
+{
+  position: absolute;
+  top: 1.6rem;
+  left: 33%;
+  font-size: 1.4rem;
+}
+
+.timer {
+  position: absolute;
+  top: 0.6rem;
+  left: 60%;
+  font-size: 1.25rem;
+  display: flex;
+}
+.timer img {
+  width: 8%;
+}
+#timer-digit{
+  position: relative;
+  top: 1rem;
+  right: 0;
+  left:0.5rem;
+}
 
 @media only  screen and (max-width: 560px){
   .container {
@@ -123,15 +234,28 @@ button :hover
   }
 
   h1{
-    font-size: 1rem;
-    top:0;
-    margin: 3px;
-    right: 0.5rem;
-    
-    
+    display: none;
+  
   }
   p{
     font-size: 0.8rem;
-    top: 1.3rem;
+    top: 1.8rem;
+  }
+  .reset{
+    font-size: 1rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .hitpoint{
+    font-size: 0.8rem;
+    top: 0.5rem;
+    left: 66vw;
+  }
+  .timer
+  {
+    left: 30%;
+  }
+  .timer img
+  {
+    width: 13%;
   }
 }
