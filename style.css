@@ -1,6 +1,6 @@
 html, body {
     margin: 0;
-    background-color: black;
+    background-color: rgb(184, 186, 224);
   }
   
 html {
@@ -14,11 +14,11 @@ body {
   display: flex;
   align-items: center;
 }
-.nav{
-  position:absolute;
-  top:0;
-  margin: 1rem;
-
+.nav {
+    position: absolute;
+    top: 0.7rem;
+    margin: 1rem 0;
+    left: 7.5vw;
 }
 h1 {
   font-size: 2rem;
@@ -28,7 +28,7 @@ h1 {
   top: 0;
   right: 5px;
 
-  color: transparent;
+  color: black;
   text-shadow: 0 0 4px white;
 }
 
@@ -37,16 +37,23 @@ p {
   margin: 0;
   top: 35px;
   right: 5px;
-  color: #aaa;
+  color:black;
+
 }
 .container{
   width: 85%;
   height: 85%;
   margin: auto;
   border: 2px white solid;
-  cursor: none;
+  
   position: relative;
+  background-color: black;
 }
+.active
+{
+  cursor: none;
+}
+
 
 canvas{
   width: 100%;
@@ -57,13 +64,28 @@ canvas{
   box-sizing: border-box; 
 }
 
-@media screen and (max-width: 560px){
+@media only  screen and (max-width: 560px){
   .container {
-    margin: 2rem;
-    background-color: blue;
+    margin: 0 1rem;
+    width: 100%;
+    height: 90%;
+    top: 3vh;
+  }
+  .nav{
+    left: 4.5vw;
+
+
+
   }
 
   h1{
-    font-size: 4rem;
+    font-size: 1rem;
+    top:0.5rem;
+    right: 0.5rem;
+    
+    
+  }
+  p{
+    font-size: 0.8rem;
   }
 }

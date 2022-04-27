@@ -5,7 +5,7 @@ let count = 0;
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
-const container = document.querySelector('canvas');
+const container = document.querySelector('.container');
 
 
 const width = canvas.width = container.clientWidth;
@@ -14,17 +14,17 @@ const height = canvas.height = container.clientHeight;
 // function to generate random number
 
 function random(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // function to generate random RGB color value
 
 function randomRGB() {
-  return `rgb(${random(0, 255)},${random(0, 255)},${random(0, 255)})`;
+   return `rgb(${random(0, 255)},${random(0, 255)},${random(0, 255)})`;
 }
 
 class Shape {
-   constructor(x, y, velX, velY){
+   constructor(x, y, velX, velY) {
       this.x = x;
       this.y = y;
       this.velX = velX;
@@ -81,7 +81,7 @@ class Ball extends Shape {
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < this.size + ball.size) {
-              ball.color = this.color = randomRGB();
+               ball.color = this.color = randomRGB();
             }
          }
       }
@@ -90,18 +90,18 @@ class Ball extends Shape {
 }
 
 class EvilCircle extends Shape {
-   constructor(x,y){
+   constructor(x, y) {
       super(x, y, 20, 20);
       this.color = 'white';
       this.size = 10;
 
-      window.addEventListener('mousemove', e =>{
+      window.addEventListener('mousemove', e => {
          this.x = e.offsetX;
-         this.y = e.offsetY;    
+         this.y = e.offsetY;
       });
-      window.addEventListener('touchstart', e =>{
+      window.addEventListener('touchstart', e => {
          this.x = e.offsetX;
-         this.y = e.offsetY;    
+         this.y = e.offsetY;
       });
 
    }
@@ -140,11 +140,11 @@ class EvilCircle extends Shape {
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < this.size + ball.size) {
-              ball.exists = false;
-              this.size += 0.8;
-              count--;
-              this.color = randomRGB();
-              para.textContent = `Ball count: ${count}`
+               ball.exists = false;
+               this.size += 0.8;
+               count--;
+               this.color = randomRGB();
+               para.textContent = `Ball count: ${count}`
             }
          }
       }
@@ -155,21 +155,21 @@ class EvilCircle extends Shape {
 const balls = [];
 let ballNumber = 100;
 while (balls.length < ballNumber) {
-   const size = random(10,20);
+   const size = random(10, 20);
    const ball = new Ball(
       // ball position always drawn at least one ball width
       // away from the edge of the canvas, to avoid drawing errors
-      random(0 + size,width - size),
-      random(0 + size,height - size),
-      random(-7,7),
-      random(-7,7),
+      random(0 + size, width - size),
+      random(0 + size, height - size),
+      random(-7, 7),
+      random(-7, 7),
       randomRGB(),
       size
    );
 
-  balls.push(ball);
-  count++;
-  para.textContent = `Ball count: ${count}`
+   balls.push(ball);
+   count++;
+   para.textContent = `Ball count: ${count}`
 
 }
 
@@ -179,14 +179,14 @@ const evil = new EvilCircle(
 );
 
 function loop() {
-   ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-   ctx.fillRect(0, 0,  width, height);
+   ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+   ctx.fillRect(0, 0, width, height);
 
    for (const ball of balls) {
-      if (ball.exists){
+      if (ball.exists) {
          ball.draw();
          ball.update();
-         ball.collisionDetect();    
+         ball.collisionDetect();
       }
    }
    evil.draw();
@@ -202,18 +202,19 @@ function loop() {
 const startGame = document.querySelector('.start');
 startGame.addEventListener('click', (e) => {
    e.preventDefault();
+   container.classList.add('active');
    loop();
    startGame.textContent = 'Increase speed';
 })
 
 const stopGame = document.querySelector('.stop');
-stopGame.addEventListener('click', ()=>{
+stopGame.addEventListener('click', () => {
    cancelAnimationFrame(loop);
 })
 
 
 
-function updateNumber(){
+function updateNumber() {
    const changeNumber = document.querySelector('.change-number');
    changeNumber.addEventListener('click', () => {
       ballNumber = window.prompt('How many asteroids do you want?', '100');
