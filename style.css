@@ -55,7 +55,7 @@ p {
 }
 .active
 {
-  cursor: none;
+  cursor: pointer;
 }
 
 canvas{

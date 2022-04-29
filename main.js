@@ -43,6 +43,9 @@ const height = canvas.height = container.clientHeight;
 
 
 let speed = 3;
+let ballNumber = 50;
+
+
 function increaseValue() {
    var value = parseInt(document.getElementById('number').value, 10);
    value = isNaN(value) ? 0 : value;
@@ -78,6 +81,10 @@ function random(min, max) {
    }
 }
 
+function randomNumBetween(min, max) {
+   return min + Math.random() * (max - min);
+ }
+
 // function to generate random RGB color value
 
 function randomRGB() {
@@ -97,167 +104,223 @@ class Shape {
    }
 }
 
-class Ball extends Shape {
-   constructor(x, y, velX, velY, color, size) {
-
-      super(x, y, velX, velY);
-      this.color = color;
-      this.size = size;
-      this.exists = true;
+class Vector {
+   constructor(x, y){
+      this.x = x;
+      this.y = y;
    }
 
-   draw() {
-      ctx.beginPath();
-      ctx.fillStyle = this.color;
-      ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = .3;
-      ctx.stroke();
+   static add(vector1, vector2) {
+      return new Vector(vector1.x + vector2.x, vector1.y + vector2.y);
+   }
+   static sub(vector1, vector2){
+      return new Vector(vector1.x - vector2.x, vector1.y - vector2.y);
+   }
+   static mult(vector, scalar){
+      return new Vector(vector.x*scalar, vector.y*scalar);
+   }
+   static div(vector, scalar){
+      return new Vector(vector.x/scalar, vector.y/scalar);
+   }
+   // used to return the length of unit normal and unit tangent vectors
+   dot(vector){
+      return this.x * vector.x + this.y * vector.y;
    }
 
-   update() {
-      if (this.x + this.size >= width || this.x - this.size <= 0) {
-         this.velX = -(this.velX);
-         this.color = randomRGB();
-      }
-
-      if (this.y + this.size >= height || this.y - this.size <= 0) {
-         this.velY = -(this.velY);
-         this.color = randomRGB();
-      }
-
-      this.x += this.velX;
-      this.y += this.velY;
+   getTangent(){
+      return new Vector(-this.y, this.x);
+   }
+   mag () {
+      return Math.sqrt((this.x)**2+(this.y)**2);
    }
 
-   collisionDetect() {
-      for (const ball of balls) {
-         if (!(this === ball) && ball.exists) {
-            const dx = this.x - ball.x;
-            const dy = this.y - ball.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < this.size + ball.size) {
-               // this.color = randomRGB();
-
-               this.velX = - this.velX;
-               this.velY = - this.velY;
-               ball.velX = - ball.velX;
-               ball.velY = - ball.velY;
-
-            }
-         }
-      }
+   copy(){
+      return new Vector(this.x, this.y);
    }
-
+   static random(minX, maxX, minY, maxY) {
+      return new Vector(
+        randomNumBetween(minX, maxX),
+        randomNumBetween(minY, maxY)
+      );
+    }
 }
 
-class EvilCircle extends Shape {
+
+class Ball {
    constructor(x, y) {
-      super(x, y, 20, 20);
-      this.color = 'white';
-      this.size = 10;
+      this.pos = new Vector(x,y);
+      this.vel = Vector.random(-2, 2, -2, 2);
+      this.acc = new Vector(0,0);
+      this.radius = random(5, 80);
+   }
 
-      window.addEventListener('mousemove', e => {
-         this.x = e.offsetX;
-         this.y = e.offsetY;
-      });
-      window.addEventListener('touchstart', e => {
-         this.x = e.offsetX;
-         this.y = e.offsetY;
-      });
+   update(){
+      this.pos = Vector.add(this.pos, this.vel);
+      this.vel = Vector.add(this.vel, this.acc);
+      this.acc = Vector.mult(this.acc, 0);
+   }
+
+   checkCollision(ball) {
+      // vector point between the centers of two balls
+      const v = Vector.sub(this.pos, ball.pos);
+      const dist = v.mag();
+      if (dist <= this.radius + ball.radius) {
+         const unitNormal = Vector.div(v, dist);
+         const unitTangent = unitNormal.getTangent();
+
+         // correct for two randomly generated balls
+         const correction = Vector.mult(unitNormal, this.radius + ball.radius);
+         const newV = Vector.add(ball.pos, correction);
+         this.pos = newV;
+
+         const a = this.vel;
+         const b = ball.vel;
+
+         const a_n = a.dot(unitNormal);
+         const b_n = b.dot(unitNormal);
+         const a_t = a.dot(unitTangent);
+         const b_t = b.dot(unitTangent);
+
+         // Calculate after-collision velocities on the a_n and b_n, a_t and b_t remain the same
+         const a_n_final = (a_n * (this.radius - ball.radius) +
+         2 * ball.radius*b_n) / (this.radius + ball.radius);
+         const b_n_final = (b_n * (ball.radius - this.radius) + 
+         2 * this.radius * a_n) / (this.radius + ball.radius);
+
+         const a_n_after = Vector.mult(unitNormal, a_n_final);
+         const b_n_after = Vector.mult(unitNormal, b_n_final);
+         const a_t_after = Vector.mult(unitTangent, a_t);
+         const b_t_after = Vector.mult(unitTangent, b_t);
+
+         // merge after collide vector
+         const a_after = Vector.add(a_n_after, a_t_after);
+         const b_after = Vector.add(b_n_after, b_t_after);
+
+         this.vel = a_after;
+         ball.vel = b_after;
+      }
 
    }
 
+
    draw() {
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`;
       ctx.beginPath();
-      ctx.strokeStyle = this.color;
-      ctx.lineWidth = 3;
-      ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
-      ctx.stroke();
-      ctx.fillStyle = 'rgba(25, 25, 25, 1)';
+      ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
       ctx.fill();
    }
 
-   checkBounds() {
-      if ((this.x + this.size) >= width) {
-         this.x -= this.size;
+   handleEdges() { //handle edges
+      if (this.pos.x + this.radius >= width || this.pos.x - this.radius <= 0) {
+         this.vel.x = -(this.vel.x);
+         // this.color = randomRGB();
       }
 
-      if ((this.x - this.size) <= 0) {
-         this.x += this.size;
-      }
-
-      if ((this.y + this.size) >= height) {
-         this.x -= this.size;
-      }
-
-      if ((this.y - this.size) <= 0) {
-         this.x += this.size;
-      }
+      if (this.pos.y + this.radius >= height || this.pos.y - this.radius <= 0) {
+         this.vel.y = -this.vel.y;
+         // this.color = randomRGB();
+      }    
    }
-
-   collisionDetect() {
-      for (const ball of balls) {
-         if (ball.exists) {
-            const dx = this.x - ball.x;
-            const dy = this.y - ball.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < this.size + ball.size) {
-               ball.exists = false;
-               this.size += 0.8;
-               this.color = randomRGBEvilCircle();
-               count--;
-               para.textContent = `Asteroids: ${count}`;
-               
-               hitpoint--;
-               hitpointValue.textContent = `HP: ${(hitpoint/hpMAX*100).toFixed(0)}`;
-               document.getElementById('hp').value=hitpoint/hpMAX*100;
-               
-            }
-         }
-      }
-   }
-
-
 }
+
+// class EvilCircle extends Shape {
+//    constructor(x, y) {
+//       super(x, y, 20, 20);
+//       this.color = 'white';
+//       this.radius = 10;
+
+//       canvas.addEventListener('mousemove', e => {
+//          this.x = e.offsetX;
+//          this.y = e.offsetY;
+//       });
+//       canvas.addEventListener('touchstart', e => {
+//          this.x = e.offsetX;
+//          this.y = e.offsetY;
+//       });
+
+//    }
+
+//    draw() {
+//       ctx.beginPath();
+//       ctx.strokeStyle = this.color;
+//       ctx.lineWidth = 3;
+//       ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+//       ctx.stroke();
+//       ctx.fillStyle = 'rgba(25, 25, 25, 1)';
+//       ctx.fill();
+//    }
+
+//    checkBounds() {
+//       if ((this.x + this.radius) >= width) {
+//          this.x = -this.radius;
+//       }
+
+//       if ((this.x - this.radius) <= 0) {
+//          this.x += this.radius;
+//       }
+
+//       if ((this.y + this.radius) >= height) {
+//          this.x -= this.radius;
+//       }
+
+//       if ((this.y - this.radius) <= 0) {
+//          this.x += this.radius;
+//       }
+//    }
+
+//    collisionDetect() {
+//       for (const ball of balls) {
+//          if (ball.exists) {
+//             const dx = this.x - ball.x;
+//             const dy = this.y - ball.y;
+//             const distance = Math.sqrt(dx * dx + dy * dy);
+
+//             if (distance < this.radius + ball.radius) {
+//                ball.exists = false;
+//                this.radius += 0.8;
+//                this.color = randomRGBEvilCircle();
+//                count--;
+//                para.textContent = `Asteroids: ${count}`;
+               
+//                hitpoint--;
+//                hitpointValue.textContent = `HP: ${(hitpoint/hpMAX*100).toFixed(0)}`;
+//                document.getElementById('hp').value=hitpoint/hpMAX*100;
+               
+//             }
+//          }
+//       }
+//    }
+// }
 const balls = [];
-let ballNumber = window.prompt('How many asteroids? (max: 999)', 50);
 while (balls.length < ballNumber) {
-   //asteroid size
-   const size = random(5, 12);
-   const ball = new Ball(
+   //asteroid radius
+      const ball = new Ball(
       // ball position always drawn at least one ball width
       // away from the edge of the canvas, to avoid drawing errors
-      random(0 + size, width - size),
-      random(0 + size, height - size),
+      // hardcode distance
+      random(80, width-80),
+      random(80, height-80)
       // initial speed
-      random(-speed, speed),
-      random(-speed, speed),
-      randomRGB(),
-      size
-
    );
+
+   console.log(ball)
+   
 
    balls.push(ball);
    count++;
    para.textContent = `Asteroids: ${count}`
 }
 
-const evil = new EvilCircle(
-   random(0, width),
-   random(0, height),
-);
+// const evil = new EvilCircle(
+//    random(0, width),
+//    random(0, height),
+// );
 
 function loop() {
    if (count === 0) {
       container.classList.remove('active');
       clearInterval(interval);
       alert('The black hole has taken the entire galaxy!!!');
-      
-      
    }
    else if (hitpoint <= 0){
       clearInterval(interval);
@@ -266,25 +329,30 @@ function loop() {
       
    }
    else {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-      ctx.fillRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height);
 
-      for (const ball of balls) {
-         if (ball.exists) {
-            ball.draw();
-            ball.update();
-            ball.collisionDetect();
+      for (let i = 0; i < balls.length; i++) {
+         const current =  balls[i];
+         const rest = balls.slice(i+1);
+         for (let b of rest){
+            b.checkCollision(current);
          }
       }
-      evil.draw();
-      // evil.checkBounds();
-      evil.collisionDetect();
+
+      for (let ball of balls){
+         ball.update();
+         ball.handleEdges(width, height);
+         ball.draw();
+
+      }
+      
+      // evil.draw();
+      // // evil.checkBounds();
+      // evil.collisionDetect();
       requestAnimationFrame(loop);
-      console.log(random(-5, 5) === 0);
+      // console.log(random(-5, 5) === 0);
 
    }
-
-
 }
 
 
@@ -306,7 +374,7 @@ startGame.addEventListener('click', (e) => {
 });
 
 
-reset.addEventListener('click', () => {
+reset.addEventListener('mousedown', (e) => {
    window.location.reload();
 })
 
