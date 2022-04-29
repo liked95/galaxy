@@ -43,7 +43,7 @@ const height = canvas.height = container.clientHeight;
 
 
 let speed = 3;
-let ballNumber = 50;
+let ballNumber = window.prompt('How many asteroid?: ');
 
 
 function increaseValue() {
