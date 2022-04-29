@@ -147,11 +147,12 @@ class Vector {
 
 
 class Ball {
-   constructor(x, y) {
+   constructor(x, y, color) {
       this.pos = new Vector(x,y);
       this.vel = Vector.random(-2, 2, -2, 2);
       this.acc = new Vector(0,0);
-      this.radius = random(5, 80);
+      this.radius = random(5, 30);
+      this.color = randomRGB();
    }
 
    update(){
@@ -204,7 +205,7 @@ class Ball {
 
 
    draw() {
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`;
+      ctx.fillStyle = this.color;
       ctx.beginPath();
       ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
       ctx.fill();
